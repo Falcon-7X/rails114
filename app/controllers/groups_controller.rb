@@ -48,6 +48,30 @@ before_action :find_group_and_check_permission, only: [:edit, :update, :destroy]
     @posts = @group.posts.recent.paginate(:page => params[:page], :per_page =>3)
   end
 
+  def join
+    @group = Group.find(params[:id])
+
+    if !current_user.is_member_of?(@group)
+      current_user.join!(@group)
+      flash[:notice] = "Join Success!"
+    else
+      flash[:warning] = "You has already joined!"
+    end
+    redirect_to group_path(@group)
+  end
+
+  def quit
+    @group = Group.find(params[:id])
+
+    if current_user.is_member_of?(@group)
+      current_user.quit!(@group)
+      flash[:alert] = "Quit Success."
+    else
+      flash[:warning] = "Can not quit!"
+    end
+    redirect_to group_path(@group)
+  end
+
   private
 
   def group_params

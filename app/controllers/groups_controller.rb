@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
 before_action :authenticate_user! , only: [:new, :create, :edit, :updete, :destroy]
+before_action :find_group_and_check_permission, only: [:edit, :update, :destroy]
   def index
     @groups = Group.all
   end
@@ -20,37 +21,25 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :updete, :destr
   end
 
   def edit
-    @group = Group.find(params[:id])
-
-    if current_user != @group.user
-      redirect_to root_path, alert: "You have no mission!"
-
-    end
   end
 
   def update
-    @group = Group.find(params[:id])
     if @group.update(group_params)
       redirect_to groups_path, notice: "Update Success!"
     else
       render :edit
     end
-
-    if current_user != @group.user
-      redirect_to root_path, alert: "You have no mission!"
-
-    end
   end
 
   def destroy
-    @group = Group.find(params[:id])
     @group.destroy
-
     redirect_to groups_path, alert: "Group deleted!"
+  end
 
+  def find_group_and_check_permission
+    @group = Group.find(params[:id])
     if current_user != @group.user
       redirect_to root_path, alert: "You have no mission!"
-
     end
   end
 

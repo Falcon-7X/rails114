@@ -21,6 +21,11 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :updete, :destr
 
   def edit
     @group = Group.find(params[:id])
+
+    if current_user != @group.user
+      redirect_to root_path, alert: "You have no mission!"
+
+    end
   end
 
   def update
@@ -30,6 +35,11 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :updete, :destr
     else
       render :edit
     end
+
+    if current_user != @group.user
+      redirect_to root_path, alert: "You have no mission!"
+
+    end
   end
 
   def destroy
@@ -37,6 +47,11 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :updete, :destr
     @group.destroy
 
     redirect_to groups_path, alert: "Group deleted!"
+
+    if current_user != @group.user
+      redirect_to root_path, alert: "You have no mission!"
+
+    end
   end
 
   private

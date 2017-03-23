@@ -43,6 +43,11 @@ before_action :find_group_and_check_permission, only: [:edit, :update, :destroy]
     end
   end
 
+  def show
+    @group = Group.find(params[:id])
+
+  end
+
   private
 
   def group_params

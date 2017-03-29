@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create]
-  before_action :find_group_and_check_permission, only: [:edit, :update, :destroy]
+  before_action :find_group_and_post_then_check_permission, only: [:edit, :update, :destroy]
 
   def new
     @group = Group.find(params[:group_id])
@@ -36,7 +36,7 @@ class PostsController < ApplicationController
     redirect_to account_posts_path, alert: "Post Delete!"
   end
 
-  def find_group_and_check_permission
+  def find_group_and_post_then_check_permission
     @group = Group.find(params[:group_id])
     @post = Post.find(params[:id])
     @post.group = @group

@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, :only => [:new, :create]
+  before_action :find_group_and_check_permission, only: [:edit, :update, :destroy]
 
   def new
     @group = Group.find(params[:group_id])
@@ -20,18 +21,9 @@ class PostsController < ApplicationController
   end
 
   def edit
-    @group = Group.find(params[:group_id])
-    @post = Post.find(params[:id])
-    @post.group = @group
-    @post.user = current_user
   end
 
   def update
-    @group = Group.find(params[:group_id])
-    @post = Post.find(params[:id])
-    @post.group = @group
-    @post.user = current_user
-
     if @post.update(post_params)
       redirect_to account_posts_path
     else
@@ -40,13 +32,19 @@ class PostsController < ApplicationController
   end
 
   def destroy
+    @post.destroy
+    redirect_to account_posts_path, alert: "Post Delete!"
+  end
+
+  def find_group_and_check_permission
     @group = Group.find(params[:group_id])
     @post = Post.find(params[:id])
     @post.group = @group
     @post.user = current_user
 
-    @post.destroy
-    redirect_to account_posts_path, alert: "Post Delete!"
+    if current_user != @group.user
+      redirect_to root_path, alert: "You have no mission!"
+    end
   end
 
   private
